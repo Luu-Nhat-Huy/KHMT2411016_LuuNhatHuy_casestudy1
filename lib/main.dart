@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dashboard.dart';
 
 void main() {
   runApp(const ExpenseManagerApp());
@@ -65,7 +66,14 @@ class WelcomeScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Dashboard(),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2176C7),
                     foregroundColor: Colors.white,
@@ -145,9 +153,9 @@ class WalletIcon extends StatelessWidget {
             child: Container(
               width: 55,
               height: 34,
-              decoration: BoxDecoration(
-                color: const Color(0xFF0756A8),
-                borderRadius: const BorderRadius.only(
+              decoration: const BoxDecoration(
+                color: Color(0xFF0756A8),
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(11),
                   bottomLeft: Radius.circular(11),
                   topRight: Radius.circular(7),
