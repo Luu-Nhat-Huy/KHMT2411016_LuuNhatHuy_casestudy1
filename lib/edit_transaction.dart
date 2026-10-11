@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'add_transaction.dart';
+import 'database/database_helper.dart';
+import 'models/transaction_model.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -41,7 +42,8 @@ class _EditTransactionScreenState
     selectedDate = widget.transaction.date;
 
     amountController = TextEditingController(
-      text: widget.transaction.amount.toStringAsFixed(0),
+      text: widget.transaction.amount
+          .toStringAsFixed(0),
     );
 
     noteController = TextEditingController(
@@ -77,7 +79,7 @@ class _EditTransactionScreenState
         '${date.year}';
   }
 
-  void saveTransaction() {
+  Future<void> saveTransaction() async {
     final String input =
     amountController.text.replaceAll('.', '').trim();
 
@@ -92,7 +94,8 @@ class _EditTransactionScreenState
       return;
     }
 
-    final Transaction updatedTransaction = Transaction(
+    final updatedTransaction = Transaction(
+      id: widget.transaction.id,
       type: selectedType,
       category: selectedCategory,
       amount: amount,
@@ -100,7 +103,13 @@ class _EditTransactionScreenState
       note: noteController.text.trim(),
     );
 
-    Navigator.pop(context, updatedTransaction);
+    await DatabaseHelper.instance.updateTransaction(
+      updatedTransaction,
+    );
+
+    if (!mounted) return;
+
+    Navigator.pop(context, true);
   }
 
   @override
@@ -131,9 +140,15 @@ class _EditTransactionScreenState
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 25),
+          padding: const EdgeInsets.fromLTRB(
+            20,
+            10,
+            20,
+            25,
+          ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+            CrossAxisAlignment.start,
             children: [
               buildTypeSelector(),
               const SizedBox(height: 20),
@@ -187,11 +202,13 @@ class _EditTransactionScreenState
                 child: ElevatedButton(
                   onPressed: saveTransaction,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2176C7),
+                    backgroundColor:
+                    const Color(0xFF2176C7),
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius:
+                      BorderRadius.circular(10),
                     ),
                   ),
                   child: const Text(
@@ -234,7 +251,8 @@ class _EditTransactionScreenState
                   color: selectedType == 'Chi tiêu'
                       ? const Color(0xFFFF5B61)
                       : Colors.white,
-                  borderRadius: BorderRadius.circular(9),
+                  borderRadius:
+                  BorderRadius.circular(9),
                 ),
                 child: Text(
                   'Chi tiêu',
@@ -262,7 +280,8 @@ class _EditTransactionScreenState
                   color: selectedType == 'Thu nhập'
                       ? const Color(0xFF20B26B)
                       : Colors.white,
-                  borderRadius: BorderRadius.circular(9),
+                  borderRadius:
+                  BorderRadius.circular(9),
                 ),
                 child: Text(
                   'Thu nhập',
@@ -285,7 +304,8 @@ class _EditTransactionScreenState
   Widget buildCategoryDropdown() {
     return Container(
       height: 52,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding:
+      const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(
           color: const Color(0xFFDDE2E9),
@@ -303,30 +323,12 @@ class _EditTransactionScreenState
           items: categories.map((category) {
             return DropdownMenuItem<String>(
               value: category,
-              child: Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFEEF0),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.restaurant_rounded,
-                      size: 18,
-                      color: Color(0xFFFF5B61),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    category,
-                    style: const TextStyle(
-                      color: Color(0xFF4B5565),
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+              child: Text(
+                category,
+                style: const TextStyle(
+                  color: Color(0xFF4B5565),
+                  fontSize: 14,
+                ),
               ),
             );
           }).toList(),
@@ -364,7 +366,8 @@ class _EditTransactionScreenState
                   fontSize: 14,
                 ),
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding:
+                EdgeInsets.symmetric(
                   horizontal: 12,
                 ),
               ),
@@ -390,7 +393,8 @@ class _EditTransactionScreenState
       onTap: selectDate,
       child: Container(
         height: 52,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding:
+        const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           border: Border.all(
             color: const Color(0xFFDDE2E9),
